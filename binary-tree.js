@@ -1,81 +1,58 @@
 const Node = require("./node")
 
-const BinaryTree = (array) => {
-  const sortedArrayData = [...new Set(array)].sort((a, b) => a - b);
+class BinaryTree {
+  constructor(array) {
+    const sortedArray = [...new Set(array)].sort((a, b) => a - b);
+    this.root = this.buildTree(sortedArray);
+  }
 
-  let root = buildTree(sortedArrayData);
-
-  function buildTree(sortedArray) {
+  buildTree(sortedArray) {
     if (sortedArray.length === 0) return null;
 
     const midpoint = Math.floor(sortedArray.length / 2);
     const newNode = Node(sortedArray[midpoint]);
-    const leftSubTree = buildTree(sortedArray.slice(0, midpoint));
-    const rightSubTree = buildTree(sortedArray.slice(midpoint + 1));
-    
-    newNode.leftChild = leftSubTree;
-    newNode.rightChild = rightSubTree;
+    newNode.leftChild = this.buildTree(sortedArray.slice(0, midpoint));
+    newNode.rightChild = this.buildTree(sortedArray.slice(midpoint + 1));
     return newNode;
   }
 
-  function insert(value, currentNode = root) {
+  insert(value, currentNode = this.root) {
     if (currentNode === null) return Node(value);
     if (currentNode.value === value) return;
 
     if (currentNode.value < value) {
-      currentNode.rightChild = insert(value, currentNode.rightChild);
+      currentNode.rightChild = this.insert(value, currentNode.rightChild);
     } else {
-      currentNode.leftChild = insert(value, currentNode.leftChild);
+      currentNode.leftChild = this.insert(value, currentNode.leftChild);
     }
     return currentNode;
   }
 
-  function remove(value, currentNode = root) {
+  remove(value, currentNode = this.root) {
     if (currentNode === null) return currentNode;
 
     if (currentNode.value === value) {
-      currentNode = removeNodeHelper(currentNode);
+      currentNode = this.#removeNodeHelper(currentNode);
     } else if (currentNode.value > value) {
-      currentNode.leftChild = remove(value, currentNode.leftChild);
+      currentNode.leftChild = this.remove(value, currentNode.leftChild);
     } else {
-      currentNode.rightChild = remove(value, currentNode.rightChild);
+      currentNode.rightChild = this.remove(value, currentNode.rightChild);
     }
     return currentNode;
   }
 
-  function removeNodeHelper(node) {
-    if (node.leftChild && node.rightChild) {
-      const successorNode = inorderSuccessorFor(node.rightChild);
-      node.value = successorNode.value;
-      node.rightChild = remove(successorNode.value, node.rightChild);
-      return node;
-    } else {
-      const replacementNode = node.rightChild || node.leftChild;
-      node = null;
-      return replacementNode;
-    }
-  }
-
-  function inorderSuccessorFor(node) {
-    let currentNode = node;
-    while (currentNode.leftChild) {
-      currentNode = currentNode.leftChild;
-    }
-    return currentNode;
-  }
-
-  function find(value, node = root) {
+  find(value, node = this.root) {
     if (node === null || node.value === value) return node;
 
     if (node.value < value) {
-      return find(value, node.rightChild);
+      return this.find(value, node.rightChild);
     } else {
-      return find(value, node.leftChild);
+      return this.find(value, node.leftChild);
     }
   }
 
-  function levelOrder(callbackFn) {
-    const queue = [root];
+  levelOrder(callbackFn) {
+    const queue = [this.root];
     const levelOrderList = [];
     while (queue.length > 0) {
       const currentNode = queue.shift();
@@ -90,65 +67,81 @@ const BinaryTree = (array) => {
     if (levelOrderList.length > 0) return levelOrderList;
   }
 
-  function inorder(callbackFn, node = root, inorderList = []) {
+  inorder(callbackFn, node = this.root, inorderList = []) {
     if (node === null) return;
 
-    inorder(callbackFn, node.leftChild, inorderList);
+    this.inorder(callbackFn, node.leftChild, inorderList);
     callbackFn ? callbackFn(node) : inorderList.push(node.value);
-    inorder(callbackFn, node.rightChild, inorderList);
+    this.inorder(callbackFn, node.rightChild, inorderList);
 
     if (inorderList.length > 0) return inorderList;
   }
 
-  function preorder(callbackFn, node = root, preorderList = []) {
+  preorder(callbackFn, node = this.root, preorderList = []) {
     if (node === null) return;
 
     callbackFn ? callbackFn(node) : preorderList.push(node.value);
-    preorder(callbackFn, node.leftChild, preorderList);
-    preorder(callbackFn, node.rightChild, preorderList);
+    this.preorder(callbackFn, node.leftChild, preorderList);
+    this.preorder(callbackFn, node.rightChild, preorderList);
 
     if (preorderList.length > 0) return preorderList;
   }
 
-  function postorder(callbackFn, node = root, postorderList = []) {
+  postorder(callbackFn, node = this.root, postorderList = []) {
     if (node === null) return;
 
-    postorder(callbackFn, node.leftChild, postorderList,);
-    postorder(callbackFn, node.rightChild, postorderList);
+    this.postorder(callbackFn, node.leftChild, postorderList,);
+    this.postorder(callbackFn, node.rightChild, postorderList);
     callbackFn ? callbackFn(node) : postorderList.push(node.value);
 
     if (postorderList.length > 0) return postorderList;
   }
 
-  function height(node = root) {
+  height(node = this.root) {
     if (node === null) return 0;
 
-    const leftHeight = height(node.leftChild);
-    const rightHeight = height(node.rightChild);
+    const leftHeight = this.height(node.leftChild);
+    const rightHeight = this.height(node.rightChild);
 
     return Math.max(leftHeight, rightHeight) + 1;
   }
 
-  function depth(nodeVal, node = root, edgeCount = 0) {
+  depth(nodeVal, node = this.root, edgeCount = 0) {
     if (node === null) return;
     if (node.value === nodeVal) return edgeCount;
 
     if (node.value < nodeVal) {
-      return depth(nodeVal, node.rightChild, edgeCount + 1);
+      return this.depth(nodeVal, node.rightChild, edgeCount + 1);
     } else {
-      return depth(nodeVal, node.leftChild, edgeCount + 1);
+      return this.depth(nodeVal, node.leftChild, edgeCount + 1);
     }
   }
 
-  function isBalanced() {
-    return testBalance(root) !== -1;
+  isBalanced() {
+    return this.#testBalance(this.root) !== -1;
   }
 
-  function testBalance(node) {
+  rebalance() {
+    const inorderList = this.inorder();
+    this.root = this.buildTree(inorderList);
+  }
+
+  prettyPrint(node = this.root, prefix = "", isLeft = true) {
+    if (node.rightChild) {
+      this.prettyPrint(node.rightChild, `${prefix}${isLeft ? '|   ' : '    '}`, false)
+    }
+    console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.value}`);
+    if (node.leftChild) {
+      this.prettyPrint(node.leftChild, `${prefix}${isLeft ? '    ' : '|   '}`, true)
+    }
+  }
+
+  // private methods
+  #testBalance(node) {
     if (node === null) return 0;
 
-    const leftBalance = testBalance(node.leftChild);
-    const rightBalance = testBalance(node.rightChild);
+    const leftBalance = this.#testBalance(node.leftChild);
+    const rightBalance = this.#testBalance(node.rightChild);
     const diff = Math.abs(leftBalance - rightBalance);
 
     if (leftBalance === -1 || rightBalance === -1 || diff > 1) {
@@ -158,35 +151,25 @@ const BinaryTree = (array) => {
     }
   }
 
-  function rebalance() {
-    const inorderList = inorder();
-    root = buildTree(inorderList);
+  #inorderSuccessorFor(node) {
+    let currentNode = node;
+    while (currentNode.leftChild) {
+      currentNode = currentNode.leftChild;
+    }
+    return currentNode;
   }
 
-  function prettyPrint(node = root, prefix = "", isLeft = true) {
-    if (node.rightChild) {
-      prettyPrint(node.rightChild, `${prefix}${isLeft ? '|   ' : '    '}`, false)
+  #removeNodeHelper(node) {
+    if (node.leftChild && node.rightChild) {
+      const successorNode = this.#inorderSuccessorFor(node.rightChild);
+      node.value = successorNode.value;
+      node.rightChild = this.remove(successorNode.value, node.rightChild);
+      return node;
+    } else {
+      const replacementNode = node.rightChild || node.leftChild;
+      node = null;
+      return replacementNode;
     }
-    console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.value}`);
-    if (node.leftChild) {
-      prettyPrint(node.leftChild, `${prefix}${isLeft ? '    ' : '|   '}`, true)
-    }
-  }
-
-  return {
-    insert,
-    remove,
-    find,
-    levelOrder,
-    inorder,
-    preorder,
-    postorder,
-    inorder,
-    height,
-    depth,
-    isBalanced,
-    rebalance,
-    prettyPrint
   }
 }
 

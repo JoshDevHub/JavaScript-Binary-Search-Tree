@@ -4,7 +4,7 @@ const randomArray = (size) => {
   return Array.from({ length: size }, () => Math.floor(Math.random() * 100));
 }
 
-const tree = BinaryTree(randomArray(20));
+const tree = new BinaryTree(randomArray(20));
 
 console.log(tree.isBalanced());
 
