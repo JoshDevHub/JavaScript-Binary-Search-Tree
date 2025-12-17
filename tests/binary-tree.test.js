@@ -56,4 +56,65 @@ describe("BinaryTree", () => {
       expect(tree.toInorderArray()).toEqual([10]);
     })
   })
+
+  describe("remove", () => {
+    test("has no impact when the given value isn't in the tree", () => {
+      const tree = new BinaryTree();
+
+      expect(tree.toInorderArray()).toEqual([]);
+      tree.remove(5);
+
+      expect(tree.toInorderArray()).toEqual([]);
+    })
+
+    test("removes the node when the value matches the root and the root has no children", () => {
+      const tree = BinaryTree.fromArray([5]);
+
+      expect(tree.toInorderArray()).toEqual([5]);
+      tree.remove(5);
+
+      expect(tree.toInorderArray()).toEqual([]);
+    })
+
+    // the tree in the following tests is structured like:
+    //
+    // │       ┌── 8
+    // │   ┌── 7
+    // │   │   └── 6
+    // └── 5
+    //     │   ┌── 4
+    //     └── 3
+    //         └── 2
+    //             └── 1
+
+    // This gives me an opportunity to test different `#remove` scenarios
+
+    test("removes a leaf node", () => {
+      const tree = BinaryTree.fromArray([1, 2, 3, 4, 5, 6, 7, 8]);
+      expect(tree.toInorderArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+
+      tree.remove(6)
+
+      expect(tree.toInorderArray()).toEqual([1, 2, 3, 4, 5, 7, 8]);
+    })
+
+    test("removes a node with one child", () => {
+      const tree = BinaryTree.fromArray([1, 2, 3, 4, 5, 6, 7, 8]);
+      expect(tree.toInorderArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+
+      tree.remove(2);
+
+      expect(tree.toInorderArray()).toEqual([1, 3, 4, 5, 6, 7, 8]);
+    })
+
+    test("removes a node with two children", () => {
+      const tree = BinaryTree.fromArray([1, 2, 3, 4, 5, 6, 7, 8]);
+      expect(tree.toInorderArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+
+      tree.remove(7);
+
+      expect(tree.toInorderArray()).toEqual([1, 2, 3, 4, 5, 6, 8]);
+
+    })
+  })
 })

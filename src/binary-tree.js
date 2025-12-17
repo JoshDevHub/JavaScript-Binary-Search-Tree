@@ -1,6 +1,6 @@
-import Node from "./node";
+import Node from "./node.js";
 
-class BinaryTree {
+export default class BinaryTree {
   #root;
 
   static fromArray(array) {
@@ -46,17 +46,36 @@ class BinaryTree {
     return node;
   }
 
-  remove(value, currentNode = this.root) {
-    if (currentNode === null) return currentNode;
+  remove(value) {
+    if (!this.#root) return;
 
-    if (currentNode.value === value) {
-      currentNode = this.#removeNodeHelper(currentNode);
-    } else if (currentNode.value > value) {
-      currentNode.leftChild = this.remove(value, currentNode.leftChild);
-    } else {
-      currentNode.rightChild = this.remove(value, currentNode.rightChild);
+    if (this.#root.value === value && this.#root.isLeaf()) {
+      this.#root = null;
+      return;
     }
-    return currentNode;
+
+    this.#recursivelyRemove(value, this.#root)
+  }
+
+  #recursivelyRemove(value, node) {
+    if (node === null) return node;
+
+    if (node.value === value) {
+      if (!node.hasTwoChildren()) {
+        return node.left ?? node.right;
+      }
+
+      node.value = node.inorderSuccessor().value;
+      node.right = this.#recursivelyRemove(node.value, node.right);
+    }
+
+    if (node.value < value) {
+      node.right = this.#recursivelyRemove(value, node.right);
+    } else if (node.value > value) {
+      node.left = this.#recursivelyRemove(value, node.left);
+    }
+
+    return node;
   }
 
   find(value, node = this.root) {
@@ -156,14 +175,12 @@ class BinaryTree {
     this.root = this.buildTree(inorderList);
   }
 
-  prettyPrint(node = this.root, prefix = "", isLeft = true) {
-    if (node.rightChild) {
-      this.prettyPrint(node.rightChild, `${prefix}${isLeft ? '|   ' : '    '}`, false)
-    }
+  prettyPrint(node = this.#root, prefix = "", isLeft = true) {
+    if (!node) return;
+
+    this.prettyPrint(node.right, `${prefix}${isLeft ? '|   ' : '    '}`, false)
     console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.value}`);
-    if (node.leftChild) {
-      this.prettyPrint(node.leftChild, `${prefix}${isLeft ? '    ' : '|   '}`, true)
-    }
+    this.prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '|   '}`, true)
   }
 
   // private methods
@@ -180,27 +197,4 @@ class BinaryTree {
       return Math.max(leftBalance, rightBalance) + 1;
     }
   }
-
-  #inorderSuccessorFor(node) {
-    let currentNode = node;
-    while (currentNode.leftChild) {
-      currentNode = currentNode.leftChild;
-    }
-    return currentNode;
-  }
-
-  #removeNodeHelper(node) {
-    if (node.leftChild && node.rightChild) {
-      const successorNode = this.#inorderSuccessorFor(node.rightChild);
-      node.value = successorNode.value;
-      node.rightChild = this.remove(successorNode.value, node.rightChild);
-      return node;
-    } else {
-      const replacementNode = node.rightChild || node.leftChild;
-      node = null;
-      return replacementNode;
-    }
-  }
 }
-
-module.exports = BinaryTree
