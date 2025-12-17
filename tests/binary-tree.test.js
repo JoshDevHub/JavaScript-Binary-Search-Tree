@@ -117,4 +117,24 @@ describe("BinaryTree", () => {
 
     })
   })
+
+  describe("includes", () => {
+    test("returns false when the tree doesn't include the value", () => {
+      const tree = BinaryTree.fromArray([1, 2, 3, 4, 5, 6, 7, 8]);
+
+      expect(tree.includes(100)).toBe(false);
+    })
+
+    test("returns true when the tree includes the value in the left subtree", () => {
+      const tree = BinaryTree.fromArray([1, 2, 3, 4, 5, 6, 7, 8]);
+
+      expect(tree.includes(1)).toBe(true);
+    })
+
+    test("returns true when the tree includes the value in the right subtree", () => {
+      const tree = BinaryTree.fromArray([1, 2, 3, 4, 5, 6, 7, 8]);
+
+      expect(tree.includes(8)).toBe(true);
+    })
+  })
 })

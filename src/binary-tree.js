@@ -78,14 +78,18 @@ export default class BinaryTree {
     return node;
   }
 
-  find(value, node = this.root) {
-    if (node === null || node.value === value) return node;
+  includes(value) {
+    return this.#find(value, this.#root) !== null;
+  }
+
+  #find(value, node) {
+    if (!node || node.value === value) return node;
 
     if (node.value < value) {
-      return this.find(value, node.rightChild);
-    } else {
-      return this.find(value, node.leftChild);
+      return this.#find(value, node.right);
     }
+
+    return this.#find(value, node.left);
   }
 
   levelOrder(callbackFn) {
