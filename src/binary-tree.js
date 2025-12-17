@@ -21,20 +21,29 @@ class BinaryTree {
     return root;
   }
 
-  constructor(root) {
+  constructor(root = null) {
     this.#root = root;
   }
 
-  insert(value, currentNode = this.root) {
-    if (currentNode === null) return Node(value);
-    if (currentNode.value === value) return;
-
-    if (currentNode.value < value) {
-      currentNode.rightChild = this.insert(value, currentNode.rightChild);
-    } else {
-      currentNode.leftChild = this.insert(value, currentNode.leftChild);
+  insert(value) {
+    if (!this.#root) {
+      this.#root = new Node(value);
+      return;
     }
-    return currentNode;
+
+    this.#recursivelyInsert(this.#root, value);
+  }
+
+  #recursivelyInsert(node, value) {
+    if (!node) return new Node(value);
+
+    if (node.value < value) {
+      node.right = this.#recursivelyInsert(node.right, value);
+    } else if (node.value > value) {
+      node.left = this.#recursivelyInsert(node.left, value);
+    }
+
+    return node;
   }
 
   remove(value, currentNode = this.root) {
