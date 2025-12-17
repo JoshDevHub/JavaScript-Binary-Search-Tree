@@ -76,7 +76,7 @@ class BinaryTree {
     if (levelOrderList.length > 0) return levelOrderList;
   }
 
-  inorder(callback) {
+  inorderForEach(callback) {
     if (typeof callback !== "function") {
       throw new TypeError(`${callback} is not a function.`);
     }
@@ -90,6 +90,12 @@ class BinaryTree {
     this.#recurseInorder(node.left, callback);
     callback(node.value);
     this.#recurseInorder(node.right, callback);
+  }
+
+  toInorderArray() {
+    const result = [];
+    this.inorderForEach((value) => result.push(value));
+    return result;
   }
 
   preorder(callbackFn, node = this.root, preorderList = []) {
