@@ -1,19 +1,28 @@
-const Node = require("./node")
+import Node from "./node";
 
 class BinaryTree {
-  constructor(array) {
-    const sortedArray = [...new Set(array)].sort((a, b) => a - b);
-    this.root = this.buildTree(sortedArray);
+  #root;
+
+  static fromArray(array) {
+    const sortedUniqArray = [...new Set(array)].sort((a, b) => a - b);
+    const root = this.#recursivelyBuildRoot(sortedUniqArray);
+
+    return new BinaryTree(root);
   }
 
-  buildTree(sortedArray) {
-    if (sortedArray.length === 0) return null;
+  static #recursivelyBuildRoot(array) {
+    if (array.length === 0) return null;
 
-    const midpoint = Math.floor(sortedArray.length / 2);
-    const newNode = Node(sortedArray[midpoint]);
-    newNode.leftChild = this.buildTree(sortedArray.slice(0, midpoint));
-    newNode.rightChild = this.buildTree(sortedArray.slice(midpoint + 1));
-    return newNode;
+    const middleIdx = Math.floor(array.length / 2);
+    const root = new Node(array[middleIdx]);
+    root.left = this.#recursivelyBuildRoot(array.slice(0, middleIdx));
+    root.right = this.#recursivelyBuildRoot(array.slice(middleIdx + 1));
+
+    return root;
+  }
+
+  constructor(root) {
+    this.#root = root;
   }
 
   insert(value, currentNode = this.root) {
@@ -67,14 +76,20 @@ class BinaryTree {
     if (levelOrderList.length > 0) return levelOrderList;
   }
 
-  inorder(callbackFn, node = this.root, inorderList = []) {
-    if (node === null) return;
+  inorder(callback) {
+    if (typeof callback !== "function") {
+      throw new TypeError(`${callback} is not a function.`);
+    }
 
-    this.inorder(callbackFn, node.leftChild, inorderList);
-    callbackFn ? callbackFn(node) : inorderList.push(node.value);
-    this.inorder(callbackFn, node.rightChild, inorderList);
+    this.#recurseInorder(this.#root, callback);
+  }
 
-    if (inorderList.length > 0) return inorderList;
+  #recurseInorder(node, callback) {
+    if (!node) return;
+
+    this.#recurseInorder(node.left, callback);
+    callback(node.value);
+    this.#recurseInorder(node.right, callback);
   }
 
   preorder(callbackFn, node = this.root, preorderList = []) {
