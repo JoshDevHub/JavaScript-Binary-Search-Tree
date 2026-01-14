@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+import BinaryTree from "../src/binary-tree.js";
+import repl from "repl";
+
+console.log("Starting BinaryTree console");
+
+const consoleRepl = repl.start("[BinaryTree] console> ");
+consoleRepl.context.BinaryTree = BinaryTree;
