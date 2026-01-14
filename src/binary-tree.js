@@ -1,5 +1,5 @@
 import Node from "./node.js";
-import Traversal from "./traversal.js";
+import { verifyCallbackArg } from "./utils.js"
 
 export default class BinaryTree {
   #root;
@@ -94,19 +94,23 @@ export default class BinaryTree {
   }
 
   levelOrderForEach(callback) {
-    new Traversal(this.#root, callback).levelOrder();
+    verifyCallbackArg(callback);
+    this.#root?.levelOrder(callback);
   }
 
   inorderForEach(callback) {
-    new Traversal(this.#root, callback).inorder();
+    verifyCallbackArg(callback);
+    this.#root?.inorder(callback);
   }
 
   preorderForEach(callback) {
-    new Traversal(this.#root, callback).preorder();
+    verifyCallbackArg(callback);
+    this.#root?.preorder(callback);
   }
 
   postorderForEach(callback) {
-    new Traversal(this.#root, callback).postorder();
+    verifyCallbackArg(callback);
+    this.#root?.preorder(callback);
   }
 
   toInorderArray() {
