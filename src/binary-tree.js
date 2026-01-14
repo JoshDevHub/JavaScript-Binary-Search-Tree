@@ -1,4 +1,5 @@
 import Node from "./node.js";
+import Traversal from "./traversal.js";
 
 export default class BinaryTree {
   #root;
@@ -58,7 +59,7 @@ export default class BinaryTree {
   }
 
   #recursivelyRemove(value, node) {
-    if (node === null) return node;
+    if (!node) return node;
 
     if (node.value === value) {
       if (!node.hasTwoChildren()) {
@@ -92,62 +93,26 @@ export default class BinaryTree {
     return this.#find(value, node.left);
   }
 
-  levelOrder(callbackFn) {
-    const queue = [this.root];
-    const levelOrderList = [];
-    while (queue.length > 0) {
-      const currentNode = queue.shift();
-      callbackFn ? callbackFn(currentNode) : levelOrderList.push(currentNode.value);
-
-      const enqueueList = [
-        currentNode?.leftChild,
-        currentNode?.rightChild
-      ].filter((value) => value);
-      queue.push(...enqueueList);
-    }
-    if (levelOrderList.length > 0) return levelOrderList;
+  levelOrderForEach(callback) {
+    new Traversal(this.#root, callback).levelOrder();
   }
 
   inorderForEach(callback) {
-    if (typeof callback !== "function") {
-      throw new TypeError(`${callback} is not a function.`);
-    }
-
-    this.#recurseInorder(this.#root, callback);
+    new Traversal(this.#root, callback).inorder();
   }
 
-  #recurseInorder(node, callback) {
-    if (!node) return;
+  preorderForEach(callback) {
+    new Traversal(this.#root, callback).preorder();
+  }
 
-    this.#recurseInorder(node.left, callback);
-    callback(node.value);
-    this.#recurseInorder(node.right, callback);
+  postorderForEach(callback) {
+    new Traversal(this.#root, callback).postorder();
   }
 
   toInorderArray() {
     const result = [];
     this.inorderForEach((value) => result.push(value));
     return result;
-  }
-
-  preorder(callbackFn, node = this.root, preorderList = []) {
-    if (node === null) return;
-
-    callbackFn ? callbackFn(node) : preorderList.push(node.value);
-    this.preorder(callbackFn, node.leftChild, preorderList);
-    this.preorder(callbackFn, node.rightChild, preorderList);
-
-    if (preorderList.length > 0) return preorderList;
-  }
-
-  postorder(callbackFn, node = this.root, postorderList = []) {
-    if (node === null) return;
-
-    this.postorder(callbackFn, node.leftChild, postorderList,);
-    this.postorder(callbackFn, node.rightChild, postorderList);
-    callbackFn ? callbackFn(node) : postorderList.push(node.value);
-
-    if (postorderList.length > 0) return postorderList;
   }
 
   height(node = this.root) {

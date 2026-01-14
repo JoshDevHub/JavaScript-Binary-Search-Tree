@@ -137,4 +137,64 @@ describe("BinaryTree", () => {
       expect(tree.includes(8)).toBe(true);
     })
   })
+
+  describe("levelOrderForEach", () => {
+    const tree = BinaryTree.fromArray([1, 2, 3, 4, 5, 6, 7, 8]);
+
+    test("throws TypeError when not given a callback", () => {
+      expect(() => tree.levelOrderForEach()).toThrow(TypeError);
+
+      expect(() => tree.levelOrderForEach("not a func")).toThrow(TypeError);
+    })
+
+    test("executes a callback for the tree in level order", () => {
+      const levelOrderVals = [];
+      const callback = (val) => levelOrderVals.push(val);
+
+      tree.levelOrderForEach(callback);
+
+      const expectedVals = [5, 3, 7, 2, 4, 6, 8, 1];
+      expect(levelOrderVals).toEqual(expectedVals);
+    })
+  })
+
+  describe("inorderForEach", () => {
+    const tree = BinaryTree.fromArray([1, 2, 3, 4, 5, 6, 7, 8]);
+
+    test("throws TypeError when not given a callback", () => {
+      expect(() => tree.inorderForEach()).toThrow(TypeError);
+
+      expect(() => tree.inorderForEach("not a func")).toThrow(TypeError);
+    })
+
+    test("executes a callback for the tree inorder", () => {
+      const inorderVals = [];
+      const callback = (val) => inorderVals.push(val);
+
+      tree.inorderForEach(callback);
+
+      const expectedVals = [1, 2, 3, 4, 5, 6, 7, 8];
+      expect(inorderVals).toEqual(expectedVals);
+    })
+  })
+
+  describe("preorderForEach", () => {
+    const tree = BinaryTree.fromArray([1, 2, 3, 4, 5, 6, 7, 8]);
+
+    test("throws TypeError when not given a callback", () => {
+      expect(() => tree.preorderForEach()).toThrow(TypeError);
+
+      expect(() => tree.preorderForEach("not a func")).toThrow(TypeError);
+    })
+
+    test("executes a callback for the tree preorder", () => {
+      const preorderVals = [];
+      const callback = (val) => preorderVals.push(val);
+
+      tree.preorderForEach(callback);
+
+      const expectedVals = [5, 3, 2, 1, 4, 7, 6, 8];
+      expect(preorderVals).toEqual(expectedVals);
+    })
+  })
 })
